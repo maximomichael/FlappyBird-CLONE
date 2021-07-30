@@ -1,0 +1,192 @@
+[gd_scene load_steps=23 format=2]
+
+[ext_resource path="res://assets/felpudo/felpudoVoa1.png" type="Texture" id=1]
+[ext_resource path="res://assets/felpudo/felpudoVoa2.png" type="Texture" id=2]
+[ext_resource path="res://assets/felpudo/felpudoVoa5.png" type="Texture" id=3]
+[ext_resource path="res://assets/felpudo/felpudoVoa6.png" type="Texture" id=4]
+[ext_resource path="res://assets/felpudo/felpudoVoa4.png" type="Texture" id=5]
+[ext_resource path="res://assets/felpudo/felpudoVoa3.png" type="Texture" id=6]
+[ext_resource path="res://Script/Player.gd" type="Script" id=7]
+[ext_resource path="res://assets/fundo.png" type="Texture" id=8]
+[ext_resource path="res://Scenes/Pipe.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Script/GeneratorPipe.gd" type="Script" id=10]
+[ext_resource path="res://Fonts/PressStart2P-vaV7.ttf" type="DynamicFontData" id=11]
+[ext_resource path="res://Script/HUD.gd" type="Script" id=12]
+[ext_resource path="res://sound/somScore.ogg" type="AudioStream" id=13]
+[ext_resource path="res://sound/somVoa.ogg" type="AudioStream" id=14]
+[ext_resource path="res://sound/somHit.ogg" type="AudioStream" id=15]
+
+[sub_resource type="Animation" id=1]
+resource_name = "Paralax"
+length = 3.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("BackgroudAnime/Sprite01:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( -9684.28, -273.081 ), Vector2( -10733.1, -273.081 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("BackgroudAnime/Sprite02:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( -8636.83, -273.081 ), Vector2( -9685.64, -273.081 ) ]
+}
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 63.6366
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 6 ), ExtResource( 5 ), ExtResource( 3 ), ExtResource( 4 ) ],
+"loop": true,
+"name": "Fry",
+"speed": 12.0
+} ]
+
+[sub_resource type="CircleShape2D" id=4]
+radius = 80.0
+
+[sub_resource type="CircleShape2D" id=5]
+radius = 50.0
+
+[sub_resource type="SegmentShape2D" id=6]
+a = Vector2( 893.411, -31.9359 )
+b = Vector2( -200.659, -31.9359 )
+
+[sub_resource type="DynamicFont" id=7]
+size = 200
+font_data = ExtResource( 11 )
+
+[node name="GameNode" type="Node2D"]
+
+[node name="BackgroudAnime" type="AnimationPlayer" parent="."]
+autoplay = "Paralax"
+anims/Paralax = SubResource( 1 )
+
+[node name="Sprite01" type="Sprite" parent="BackgroudAnime"]
+position = Vector2( -9680.28, -273.081 )
+scale = Vector2( 3.88059, 3.76962 )
+z_index = -1
+texture = ExtResource( 8 )
+offset = Vector2( 2630.27, 291.396 )
+
+[node name="Sprite02" type="Sprite" parent="BackgroudAnime"]
+position = Vector2( -8636.83, -273.081 )
+scale = Vector2( 3.88059, 3.76962 )
+z_index = -1
+texture = ExtResource( 8 )
+offset = Vector2( 2630.27, 291.396 )
+
+[node name="Player" type="RigidBody2D" parent="."]
+pause_mode = 2
+position = Vector2( 228.07, 837.445 )
+rotation = 0.0174533
+collision_mask = 12
+mode = 2
+gravity_scale = 15.22
+linear_velocity = Vector2( 0, 50 )
+script = ExtResource( 7 )
+
+[node name="AudioScore" type="AudioStreamPlayer2D" parent="Player"]
+position = Vector2( -242.651, -833.337 )
+rotation = -0.0174533
+stream = ExtResource( 13 )
+
+[node name="AudioCollision" type="AudioStreamPlayer2D" parent="Player"]
+stream = ExtResource( 15 )
+
+[node name="AudioFly" type="AudioStreamPlayer2D" parent="Player"]
+stream = ExtResource( 14 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+pause_mode = 2
+shape = SubResource( 2 )
+
+[node name="Skin" type="Node2D" parent="Player"]
+
+[node name="Bird" type="AnimatedSprite" parent="Player/Skin"]
+pause_mode = 2
+position = Vector2( -3.01526, -3.44708 )
+z_index = 1
+frames = SubResource( 3 )
+animation = "Fry"
+frame = 5
+playing = true
+
+[node name="AreaPlay2D" type="Area2D" parent="Player"]
+monitorable = false
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/AreaPlay2D"]
+shape = SubResource( 4 )
+one_way_collision_margin = 0.0
+
+[node name="AreaVerifyPoint" type="Area2D" parent="Player"]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player/AreaVerifyPoint"]
+shape = SubResource( 5 )
+
+[node name="Wall" type="RigidBody2D" parent="."]
+input_pickable = true
+collision_layer = 2
+mode = 1
+
+[node name="Up" type="CollisionShape2D" parent="Wall"]
+position = Vector2( 154.621, 1733.57 )
+shape = SubResource( 6 )
+
+[node name="Down" type="CollisionShape2D" parent="Wall"]
+position = Vector2( 171.052, 32.0723 )
+shape = SubResource( 6 )
+
+[node name="Pipes" type="Node2D" parent="."]
+position = Vector2( 142.544, 71.2719 )
+
+[node name="Pipe" parent="Pipes" instance=ExtResource( 9 )]
+position = Vector2( 1271.23, 811.995 )
+
+[node name="Timer" type="Timer" parent="Pipes"]
+wait_time = 5.0
+autostart = true
+
+[node name="GeneratorPipe" type="Position2D" parent="Pipes"]
+position = Vector2( 1272.79, 840.041 )
+script = ExtResource( 10 )
+container = NodePath("..")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource( 12 )
+
+[node name="LabelPoint" type="Label" parent="HUD"]
+margin_top = 77.0
+margin_right = 1005.0
+margin_bottom = 299.0
+custom_fonts/font = SubResource( 7 )
+text = "0"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="area_entered" from="Player/AreaPlay2D" to="Player" method="_on_AreaPlay2D_area_entered"]
+[connection signal="area_shape_entered" from="Player/AreaPlay2D" to="Player" method="_on_AreaPlay2D_area_shape_entered"]
+[connection signal="body_entered" from="Player/AreaPlay2D" to="Player" method="_on_AreaPlay2D_body_entered"]
+[connection signal="body_shape_entered" from="Player/AreaPlay2D" to="Player" method="_on_AreaPlay2D_body_shape_entered"]
+[connection signal="area_entered" from="Player/AreaVerifyPoint" to="Player" method="_on_AreaVerifyPoint_area_entered"]
+[connection signal="timeout" from="Pipes/Timer" to="Pipes/GeneratorPipe" method="_on_Timer_timeout"]
